@@ -1,6 +1,14 @@
 #include <stdio.h>
 #include "graphics.h"
 
+void setStep(_Bool enabled)
+{
+if (enabled)
+  printf("ST\n");
+else
+  printf("SF\n");
+}
+
 void drawLine(int x1, int x2, int x3, int x4)
 {
   printf("DL %i %i %i %i\n", x1, x2, x3, x4);

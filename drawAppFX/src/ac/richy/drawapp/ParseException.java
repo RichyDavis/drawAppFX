@@ -1,5 +1,6 @@
 package ac.richy.drawapp;
 
+@SuppressWarnings("serial")
 public class ParseException extends Exception
 {
   public ParseException()

@@ -1,53 +1,59 @@
 package ac.richy.drawapp;
 
-import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Scanner;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
+
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.paint.Color;
 
 public class Parser
 {
   private BufferedReader reader;
   private ImagePanel image;
   private MainWindow frame;
+  private ArrayList<String> commands = new ArrayList<String>();
+  private int index;
+  private boolean singlestep = false;
 
-  public Parser(Reader reader, ImagePanel image, MainWindow frame)
-  {
+  public Parser(Reader reader, ImagePanel image, MainWindow frame) {
     this.reader = new BufferedReader(reader);
     this.image = image;
     this.frame = frame;
+    this.index = 0;
+    initButtons();
   }
 
-  public void parse()
-  {
-    try
-    {
-      String line = reader.readLine();
-      while (line != null)
-      {
-        parseLine(line);
-        line = reader.readLine();
-      }
-    }
-    catch (IOException e)
-    {
-      frame.postMessage("Parse failed.");
-      return;
-    }
-    catch (ParseException e)
-    {
-      frame.postMessage("Parse Exception: " + e.getMessage());
-      return;
-    }
-    frame.postMessage("Drawing completed");
+  public void parse() {
+	  try {
+		  String line = reader.readLine();
+		  while (line != null) {
+			  if (singlestep == false)
+				  parseLine(line);
+			  else
+				  commands.add(line);
+			  line = reader.readLine();
+		  }
+	  }
+	  catch (IOException e) {
+		  frame.postMessage("Parse failed.\n");
+		  return;
+	  }
+	  catch (ParseException e) {
+		  frame.postMessage("Parse Exception: " + e.getMessage() +"\n");
+		  return;
+	  }
+	  frame.postMessage("Drawing completed\n");
   }
 
-  private void parseLine(String line) throws ParseException
-  {
+  private void parseLine(String line) throws ParseException {
     if (line.length() < 2) return;
     String command = line.substring(0, 2);
+    if (command.equals("ST")) { singlestep = true; return; }
+    if (command.equals("SF")) { singlestep = false; return; }
     if (command.equals("DL")) { drawLine(line.substring(2,line.length())); return; }
     if (command.equals("DR")) { drawRect(line.substring(2, line.length())); return; }
     if (command.equals("FR")) { fillRect(line.substring(2, line.length())); return; }
@@ -60,8 +66,7 @@ public class Parser
     throw new ParseException("Unknown drawing command");
   }
 
-  private void drawLine(String args) throws ParseException
-  {
+  private void drawLine(String args) throws ParseException {
     int x1 = 0;
     int y1 = 0;
     int x2 = 0;
@@ -75,8 +80,7 @@ public class Parser
     image.drawLine(x1,y1,x2,y2);
   }
 
-  private void drawRect(String args) throws ParseException
-  {
+  private void drawRect(String args) throws ParseException {
     int x1 = 0;
     int y1 = 0;
     int x2 = 0;
@@ -90,8 +94,7 @@ public class Parser
     image.drawRect(x1, y1, x2, y2);
   }
 
-  private void fillRect(String args) throws ParseException
-  {
+  private void fillRect(String args) throws ParseException {
     int x1 = 0;
     int y1 = 0;
     int x2 = 0;
@@ -105,8 +108,7 @@ public class Parser
     image.fillRect(x1, y1, x2, y2);
   }
 
-  private void drawArc(String args) throws ParseException
-  {
+  private void drawArc(String args) throws ParseException {
     int x = 0;
     int y = 0;
     int width = 0;
@@ -124,8 +126,7 @@ public class Parser
     image.drawArc(x, y, width, height, startAngle, arcAngle);
   }
 
-  private void drawOval(String args) throws ParseException
-  {
+  private void drawOval(String args) throws ParseException {
     int x1 = 0;
     int y1 = 0;
     int width = 0;
@@ -139,8 +140,7 @@ public class Parser
     image.drawOval(x1, y1, width, height);
   }
 
-  private void drawString(String args) throws ParseException
-  {
+  private void drawString(String args) throws ParseException {
     int x = 0;
     int y = 0 ;
     String s = "";
@@ -153,26 +153,49 @@ public class Parser
     image.drawString(x,y,s);
   }
 
-  private void setColour(String colourName) throws ParseException
-  {
-    if (colourName.equals("black")) { image.setColour(Color.black); return;}
-    if (colourName.equals("blue")) { image.setColour(Color.blue); return;}
-    if (colourName.equals("cyan")) { image.setColour(Color.cyan); return;}
-    if (colourName.equals("darkgray")) { image.setColour(Color.darkGray); return;}
-    if (colourName.equals("gray")) { image.setColour(Color.gray); return;}
-    if (colourName.equals("green")) { image.setColour(Color.green); return;}
-    if (colourName.equals("lightgray")) { image.setColour(Color.lightGray); return;}
-    if (colourName.equals("magenta")) { image.setColour(Color.magenta); return;}
-    if (colourName.equals("orange")) { image.setColour(Color.orange); return;}
-    if (colourName.equals("pink")) { image.setColour(Color.pink); return;}
-    if (colourName.equals("red")) { image.setColour(Color.red); return;}
-    if (colourName.equals("white")) { image.setColour(Color.white); return;}
-    if (colourName.equals("yellow")) { image.setColour(Color.yellow); return;}
+  private void setColour(String colourName) throws ParseException {
+    if (colourName.equals("black")) { image.setColour(Color.BLACK); return;}
+    if (colourName.equals("blue")) { image.setColour(Color.BLUE); return;}
+    if (colourName.equals("cyan")) { image.setColour(Color.CYAN); return;}
+    if (colourName.equals("darkgray")) { image.setColour(Color.DARKGRAY); return;}
+    if (colourName.equals("gray")) { image.setColour(Color.GRAY); return;}
+    if (colourName.equals("green")) { image.setColour(Color.GREEN); return;}
+    if (colourName.equals("lightgray")) { image.setColour(Color.LIGHTGRAY); return;}
+    if (colourName.equals("magenta")) { image.setColour(Color.MAGENTA); return;}
+    if (colourName.equals("orange")) { image.setColour(Color.ORANGE); return;}
+    if (colourName.equals("pink")) { image.setColour(Color.PINK); return;}
+    if (colourName.equals("red")) { image.setColour(Color.RED); return;}
+    if (colourName.equals("white")) { image.setColour(Color.WHITE); return;}
+    if (colourName.equals("yellow")) { image.setColour(Color.YELLOW); return;}
     throw new ParseException("Invalid colour name");
   }
 
-  private int getInteger(StringTokenizer tokenizer) throws ParseException
-  {
+  public void initButtons() {
+	  frame.getQuitButton().setOnAction(new EventHandler<ActionEvent>() {
+		  @Override public void handle(ActionEvent e) {
+			  frame.getStage().close();
+		  }
+	  });
+
+	  frame.getNextButton().setOnAction(new EventHandler<ActionEvent>() {
+		  @Override public void handle(ActionEvent e) {
+			  try {
+				  if (!commands.isEmpty() && index < commands.size()) {
+					  parseLine(commands.get(index));
+					  index++;
+				  }
+				  else {
+					  frame.postMessage("Step through not enabled.\n");
+				  }
+			  } catch (ParseException e1) {
+				  frame.postMessage("Parse Exception: " + e1.getMessage() +"\n");
+				  return;
+			  }
+		  }
+	  });
+  }
+
+  private int getInteger(StringTokenizer tokenizer) throws ParseException {
     if (tokenizer.hasMoreTokens())
       return Integer.parseInt(tokenizer.nextToken());
     else

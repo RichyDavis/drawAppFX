@@ -1,93 +1,109 @@
 package ac.richy.drawapp;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
-public class MainWindow extends JFrame implements ActionListener
+public class MainWindow
 {
-  public static final int DEFAULT_WIDTH = 500;
-  public static final int DEFAULT_HEIGHT = 300;
+	public static final int DEFAULT_WIDTH = 500;
+	public static final int DEFAULT_HEIGHT = 300;
+	private int width;
+	private int height;
 
-  private int width;
-  private int height;
+	private Stage stage;
+	private ImagePanel imagePanel;
+	private TextArea messageView;
+	private Button quitButton;
+	private Button nextButton;
 
-  private ImagePanel imagePanel;
-  private JTextArea messageView;
-  private JButton quitButton;
+	public MainWindow(Stage stage)
+	{
+		this(stage, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+	}
 
-  public MainWindow()
-  {
-    this(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-  }
+	public MainWindow(Stage stage, int width, int height)
+	{
+		this.stage = stage;
+		this.width = width;
+		this.height = height;
+		buildGUI(stage);
+	}
 
-  public MainWindow(int width, int height)
-  {
-    super("Draw App");
-    this.width = width;
-    this.height = height;
-    buildGUI();
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    this.pack();
-    this.setVisible(true);
-  }
+	public void buildGUI(Stage stage) {
+		stage.setTitle("Draw App");
+		AnchorPane anchorpane = new AnchorPane();
+		Scene scene = new Scene(anchorpane, width, height, Color.WHITESMOKE);
+		imagePanel = new ImagePanel(width,height);
 
-  private void buildGUI()
-  {
-    JPanel backPanel = new JPanel();
-    backPanel.setLayout(new BorderLayout());
-    imagePanel = new ImagePanel(width, height);
-    backPanel.add(imagePanel,BorderLayout.CENTER);
+		quitButton = new Button("Close");
+		quitButton.setPrefSize(100, 20);
+		nextButton = new Button("Next");
+		nextButton.setPrefSize(100, 20);
+		HBox hboxButtons = new HBox();
+		hboxButtons.setPadding(new Insets(5d, 6d, 5d, 6d));
+		hboxButtons.setSpacing(10d);
+		hboxButtons.setAlignment(Pos.CENTER);
+		hboxButtons.getChildren().addAll(quitButton,nextButton);
 
-    messageView = new JTextArea();
-    messageView.setRows(6);
-    messageView.setEditable(false);
-    JScrollPane scrollPane = new JScrollPane(messageView);
+		messageView = new TextArea();
+		messageView.setPrefHeight(140d);
+		messageView.setEditable(false);
 
-    JPanel lowerPanel = new JPanel();
-    lowerPanel.setLayout(new BorderLayout());
-    lowerPanel.add(scrollPane,BorderLayout.CENTER);
+		VBox vbox = new VBox();
+		vbox.setPadding(new Insets(10d));
+		vbox.setSpacing(8d);
+		vbox.setStyle("-fx-background-color: #C6C6C6;");
+		vbox.getChildren().addAll(messageView, hboxButtons);
 
-    JPanel buttonPanel = new JPanel();
-    buttonPanel.setLayout(new FlowLayout());
-    quitButton = new JButton("Close Window");
-    buttonPanel.add(quitButton);
-    quitButton.addActionListener(this);
-    lowerPanel.add(buttonPanel,BorderLayout.SOUTH);
+		AnchorPane.setBottomAnchor(vbox, 0d);
+		AnchorPane.setLeftAnchor(vbox, 0d);
+		AnchorPane.setRightAnchor(vbox, 0d);
+		anchorpane.getChildren().addAll(imagePanel.getImage(),vbox);
 
-    backPanel.add(lowerPanel,BorderLayout.SOUTH);
-    this.add(backPanel);
-  }
+		stage.setScene(scene);
+		/* Annoyingly, stage width and height include size of any decorations, so 15-30
+		 * has been added. Note that decoration sizes are not guaranteed to be the same
+		 *  for all users.
+		 */
+		stage.setWidth(width + 15);
+		stage.setHeight(height+ 30 + quitButton.getPrefHeight() +
+				hboxButtons.getPadding().getTop() +
+				hboxButtons.getPadding().getBottom() +
+				messageView.getPrefHeight() + vbox.getPadding().getTop() +
+				vbox.getPadding().getBottom() + vbox.getSpacing());
+		stage.show();
+	}
 
-  public ImagePanel getImagePanel()
-  {
-    return imagePanel;
-  }
+	public ImagePanel getImagePanel()
+	{
+		return imagePanel;
+	}
+	
+	public Button getQuitButton()
+	{
+		return quitButton;
+	}
+	
+	public Button getNextButton()
+	{
+		return nextButton;
+	}
 
-  public void postMessage(final String s)
-  {
-     SwingUtilities.invokeLater(
-        new Runnable()
-        {
-          public void run()
-          {
-            messageView.append(s);
-            messageView.repaint();
-          }
-        });
-  }
+	public Stage getStage()
+	{
+		return stage;
+	}
 
-  public void actionPerformed(ActionEvent actionEvent)
-  {
-    setVisible(false);
-    dispose();
-    System.exit(0);
-  }
+	public void postMessage(final String s)
+	{
+		messageView.appendText(s);
+	}
 }
