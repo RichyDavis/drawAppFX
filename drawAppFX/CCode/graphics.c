@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include "graphics.h"
 
-void setStep(_Bool enabled)
+void stepOn()
 {
-if (enabled)
   printf("ST\n");
-else
+}
+
+void stepOff()
+{
   printf("SF\n");
 }
 

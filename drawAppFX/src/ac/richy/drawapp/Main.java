@@ -14,8 +14,13 @@ public class Main extends Application
 
 		ImagePanel imagePanel = main.getImagePanel();
 		Reader reader = new InputStreamReader(System.in);
+
 		Parser parser = new Parser(reader,imagePanel,main);
-		parser.parse();
+		try {
+			parser.parse();
+		} catch (ParseException e) {
+			main.postMessage("Parse Exception: " + e.getMessage() +"\n");
+		}
 	}
 
 	public static void main(String[] args) {launch(args);}

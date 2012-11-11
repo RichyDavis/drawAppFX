@@ -1,6 +1,8 @@
 enum colour {black,blue,cyan,darkgray,gray,green,lightgray,magenta,orange,pink,red,white,yellow};
 typedef enum colour colour;
 
+void stepOn();
+void stepOff();
 void drawLine(int,int,int,int);
 void drawRect(int,int,int,int);
 void drawOval(int,int,int,int);

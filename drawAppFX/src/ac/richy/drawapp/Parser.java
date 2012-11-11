@@ -16,54 +16,69 @@ public class Parser
   private ImagePanel image;
   private MainWindow frame;
   private ArrayList<String> commands = new ArrayList<String>();
-  private int index;
-  private boolean singlestep = false;
+  private boolean step = false;
+  private boolean stepNotif = false;
 
   public Parser(Reader reader, ImagePanel image, MainWindow frame) {
     this.reader = new BufferedReader(reader);
     this.image = image;
     this.frame = frame;
-    this.index = 0;
     initButtons();
   }
 
-  public void parse() {
+  public void parse() throws ParseException {
 	  try {
-		  String line = reader.readLine();
-		  while (line != null) {
-			  if (singlestep == false)
-				  parseLine(line);
-			  else
+		  if (reader.ready()) {
+			  String line = reader.readLine();
+			  while (line != null) {
 				  commands.add(line);
-			  line = reader.readLine();
+				  line = reader.readLine();
+			  }
 		  }
-	  }
-	  catch (IOException e) {
+		  else throw new ParseException("Blocked or invalid input");
+	  } catch (IOException e) {
 		  frame.postMessage("Parse failed.\n");
 		  return;
 	  }
-	  catch (ParseException e) {
+	  processCommands();
+  }
+
+  public void processCommands() {
+	  try {
+		  if (!commands.isEmpty()) {
+			  while (step == false && !commands.isEmpty()) {
+				  parseLine(commands.get(0));
+				  commands.remove(0);
+			  }
+			  if (commands.isEmpty())
+				  frame.postMessage("Drawing Complete. " +
+						  "No further drawing commands available.\n");
+		  }
+	  } catch (ParseException e) {
 		  frame.postMessage("Parse Exception: " + e.getMessage() +"\n");
 		  return;
 	  }
-	  frame.postMessage("Drawing completed\n");
   }
 
   private void parseLine(String line) throws ParseException {
-    if (line.length() < 2) return;
-    String command = line.substring(0, 2);
-    if (command.equals("ST")) { singlestep = true; return; }
-    if (command.equals("SF")) { singlestep = false; return; }
-    if (command.equals("DL")) { drawLine(line.substring(2,line.length())); return; }
-    if (command.equals("DR")) { drawRect(line.substring(2, line.length())); return; }
-    if (command.equals("FR")) { fillRect(line.substring(2, line.length())); return; }
-    if (command.equals("SC")) { setColour(line.substring(3, line.length())); return; }
-    if (command.equals("DS")) { drawString(line.substring(3, line.length())); return; }
-    if (command.equals("DA")) { drawArc(line.substring(2, line.length())); return; }
-    if (command.equals("DO")) { drawOval(line.substring(2, line.length())); return; }
-
-
-    throw new ParseException("Unknown drawing command");
+	  if (line.length() < 2) return;
+	  String command = line.substring(0, 2);
+	  if (command.equals("ST")) { 
+		  step = true; 
+		  if (!stepNotif)
+			  frame.postMessage("Input: Step through feature is enabled.\n");
+		  stepNotif = true;
+		  return; 
+	  }
+	  if (command.equals("SF")) { step = false; return; }
+	  if (command.equals("DL")) { drawLine(line.substring(2,line.length())); return; }
+	  if (command.equals("DR")) { drawRect(line.substring(2, line.length())); return; }
+	  if (command.equals("FR")) { fillRect(line.substring(2, line.length())); return; }
+	  if (command.equals("SC")) { setColour(line.substring(3, line.length())); return; }
+	  if (command.equals("DS")) { drawString(line.substring(3, line.length())); return; }
+	  if (command.equals("DA")) { drawArc(line.substring(2, line.length())); return; }
+	  if (command.equals("DO")) { drawOval(line.substring(2, line.length())); return; }
+	  throw new ParseException("Unknown drawing command");
   }
 
   private void drawLine(String args) throws ParseException {
@@ -180,12 +195,20 @@ public class Parser
 	  frame.getNextButton().setOnAction(new EventHandler<ActionEvent>() {
 		  @Override public void handle(ActionEvent e) {
 			  try {
-				  if (!commands.isEmpty() && index < commands.size()) {
-					  parseLine(commands.get(index));
-					  index++;
+				  if (step) {
+					  if (!commands.isEmpty()) {
+						  parseLine(commands.get(0));
+						  commands.remove(0);
+					  }
+					  else {
+						  frame.postMessage("Drawing Complete. " +
+								  "No further drawing commands available.\n");
+					  }
 				  }
 				  else {
-					  frame.postMessage("Step through not enabled.\n");
+					  if (!stepNotif)
+						  frame.postMessage("Input: Step through has not been enabled.\n");
+					  processCommands();
 				  }
 			  } catch (ParseException e1) {
 				  frame.postMessage("Parse Exception: " + e1.getMessage() +"\n");
