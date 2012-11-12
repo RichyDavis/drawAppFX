@@ -106,4 +106,9 @@ public class MainWindow
 	{
 		messageView.appendText(s);
 	}
+	
+	public void clearMessageView()
+	{
+		messageView.clear();
+	}
 }

@@ -1,51 +1,74 @@
 #include <stdio.h>
+#include <string.h>
+#include <stdarg.h>
 #include "graphics.h"
 
-void stepOn()
-{
+void stepOn() {
   printf("ST\n");
 }
 
-void stepOff()
-{
+void stepOff() {
   printf("SF\n");
 }
 
-void drawLine(int x1, int x2, int x3, int x4)
-{
+void drawLine(int x1, int x2, int x3, int x4) {
   printf("DL %i %i %i %i\n", x1, x2, x3, x4);
 }
 
-void drawRect(int x1, int x2, int x3, int x4)
-{
+void drawRect(int x1, int x2, int x3, int x4) {
   printf("DR %i %i %i %i\n", x1, x2, x3, x4);
 }
 
-void drawOval(int x, int y, int width, int height)
-{
+void drawOval(int x, int y, int width, int height) {
   printf("DO %i %i %i %i\n",x,y,width,height);
 }
 
-void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle)
-{
+void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
   printf("DA %i %i %i %i %i %i\n",x,y,width,height, startAngle, arcAngle);
 }
 
-void fillRect(int x1, int x2, int x3, int x4)
-{
+void fillRect(int x1, int x2, int x3, int x4) {
   printf("FR %i %i %i %i\n", x1, x2, x3, x4);
 }
 
-void drawString(char* s, int x, int y)
-{
+void drawString(char* s, int x, int y) {
   printf("DS %i %i @%s\n",x,y,s);
 }
 
-void setColour(colour c)
-{
+void drawImage(char* s, int x1, int x2, int x3, int x4) {
+  printf("DI %i %i %i %i @%s\n",x1,x2,x3,x4,s);
+}
+
+void postString(char* s) {
+if (s[strlen(s)-1] == '\n')
+  printf("PS @%s",s);
+else
+  printf("PS @%s\n",s);
+}
+
+void postClear() {
+  printf("PC\n");
+}
+
+void setColour(colour c) {
+  printf("SC @%s\n",translateColour(c));
+}
+
+void setStroke(colour c) {
+  printf("SS @%s\n",translateColour(c));
+}
+
+void setGradient(colour c1, colour c2, int x, int y) {
+  printf("SG %i %i @%s,%s\n",x,y,translateColour(c1),translateColour(c2));
+}
+
+void setRadialGradient(colour c1, colour c2) {
+  printf("SR @%s,%s\n",translateColour(c1),translateColour(c2));
+}
+
+char* translateColour(colour c) {
   char* colourName;
-  switch(c)
-  {
+  switch(c) {
     case black : colourName = "black"; break;
     case blue : colourName = "blue"; break;
     case cyan : colourName = "cyan"; break;
@@ -59,6 +82,7 @@ void setColour(colour c)
     case red : colourName = "red"; break;
     case white : colourName = "white"; break;
     case yellow : colourName = "yellow"; break;
+    default : colourName = ""; break;
   }
-  printf("SC %s\n", colourName);
+  return colourName;
 }

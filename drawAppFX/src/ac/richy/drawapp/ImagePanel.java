@@ -2,8 +2,14 @@ package ac.richy.drawapp;
 
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Paint;
+import javafx.scene.paint.RadialGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
@@ -52,6 +58,20 @@ public class ImagePanel
 				if (!node.equals(graphics))
 					((Shape) node).setFill(colour);
 		}
+	}
+	
+	public void setGradient(Color colour1, Color colour2, int x, int y) {
+		
+		Stop stops[] = {new Stop(0d,colour1), new Stop(1d,colour2)};
+		LinearGradient gradient = new LinearGradient(0,0,x,y,true,CycleMethod.NO_CYCLE,stops);
+		setColour(gradient);
+	}
+	
+	public void setRadialGradient(Color colour1, Color colour2) {
+		
+		Stop stops[] = {new Stop(0d,colour1), new Stop(1d,colour2)};
+		RadialGradient gradient = new RadialGradient(0,0,0.5,0.5,0.5,true,CycleMethod.NO_CYCLE,stops);
+		setColour(gradient);
 	}
 
 	public void setStroke(Paint colour)
@@ -105,6 +125,19 @@ public class ImagePanel
 		ellipse.setStrokeType(StrokeType.INSIDE);
 		ellipse.setFill(null);
 		image.getChildren().add(ellipse);
+	}
+	
+	public void drawImage(int x, int y, int width, int height, String filename) {
+		Image file = new Image(filename);
+		ImageView imagecanvas = new ImageView();
+        imagecanvas.setImage(file);
+        imagecanvas.setSmooth(true);
+        imagecanvas.setCache(true);
+        imagecanvas.setLayoutX(x);
+        imagecanvas.setLayoutY(y);
+        if (width > 0) imagecanvas.setFitWidth(width);
+        if (height > 0) imagecanvas.setFitHeight(height);
+        image.getChildren().add(imagecanvas);
 	}
 
 	public Group getImage()
