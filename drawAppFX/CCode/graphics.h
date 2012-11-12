@@ -3,6 +3,7 @@ typedef enum colour colour;
 
 void stepOn();
 void stepOff();
+void setBackgroundSize(int x, int y);
 void drawLine(int,int,int,int);
 void drawRect(int,int,int,int);
 void drawOval(int,int,int,int);

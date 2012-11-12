@@ -86,11 +86,23 @@ public class Parser
 		if (command.equals("DA")) { drawArc(line.substring(2, line.length())); return; }
 		if (command.equals("DO")) { drawOval(line.substring(2, line.length())); return; }
 		if (command.equals("DI")) { drawImage(line.substring(3, line.length())); return; }
+		if (command.equals("BS")) { setBackgroundSize(line.substring(2, line.length())); return; }
 		if (command.equals("PS")) { postString(line.substring(3, line.length())); return; }
 		if (command.equals("PC")) { postClear(); return; }
 		throw new ParseException("Unknown drawing command \""+command+"\" of line \""+line+"\"");
 	}
 
+	private void setBackgroundSize(String args) throws ParseException {
+		int x = 0;
+		int y = 0;
+		StringTokenizer tokenizer = new StringTokenizer(args);
+		x = getInteger(tokenizer);
+		y = getInteger(tokenizer);
+		frame.setWidth(x);
+		frame.setHeight(y);
+		image.setBackgroundSize(x,y);
+	}
+	
 	private void drawLine(String args) throws ParseException {
 		int x1 = 0;
 		int y1 = 0;
@@ -284,6 +296,12 @@ public class Parser
 		frame.getQuitButton().setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
 				frame.getStage().close();
+			}
+		});
+		
+		frame.getSaveButton().setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent e) {
+				image.saveImage();
 			}
 		});
 

@@ -25,15 +25,16 @@ public class ImagePanel
 
 	public ImagePanel(int width, int height)
 	{
-		setImageSize(width, height);
-	}
-
-	private void setImageSize(int width, int height)
-	{
 		image = new Group();
 		graphics = new Rectangle(0,0,width,height);
 		image.getChildren().add(graphics);
 		clear(Color.WHITE);
+	}
+
+	public void setBackgroundSize(int width, int height)
+	{
+		graphics.setWidth(width);
+		graphics.setHeight(height);
 	}
 
 	public void setBackgroundColour(Paint colour)
@@ -138,6 +139,11 @@ public class ImagePanel
         if (width > 0) imagecanvas.setFitWidth(width);
         if (height > 0) imagecanvas.setFitHeight(height);
         image.getChildren().add(imagecanvas);
+	}
+	
+	public void saveImage() {
+		//save image code
+		
 	}
 
 	public Group getImage()
