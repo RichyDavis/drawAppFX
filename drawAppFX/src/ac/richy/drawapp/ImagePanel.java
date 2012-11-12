@@ -49,7 +49,8 @@ public class ImagePanel
 			if (((Shape) node).getFill() == null && ((Shape) node).getStroke() != null)
 				((Shape) node).setStroke(colour);
 			else
-				((Shape) node).setFill(colour);
+				if (!node.equals(graphics))
+					((Shape) node).setFill(colour);
 		}
 	}
 
@@ -57,7 +58,8 @@ public class ImagePanel
 	{
 		Node node = image.getChildren().get(image.getChildren().size()-1);
 		if (node instanceof Shape) {
-			((Shape) node).setStroke(colour);
+			if (!node.equals(graphics))
+				((Shape) node).setStroke(colour);
 		}
 	}
 

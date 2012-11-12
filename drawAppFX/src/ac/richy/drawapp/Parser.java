@@ -16,6 +16,7 @@ public class Parser
   private ImagePanel image;
   private MainWindow frame;
   private ArrayList<String> commands = new ArrayList<String>();
+  private int index = 0;
   private boolean step = false;
   private boolean stepNotif = false;
 
@@ -46,11 +47,11 @@ public class Parser
   public void processCommands() {
 	  try {
 		  if (!commands.isEmpty()) {
-			  while (step == false && !commands.isEmpty()) {
-				  parseLine(commands.get(0));
-				  commands.remove(0);
+			  while (step == false && index < commands.size()) {
+				  parseLine(commands.get(index));
+				  index++;
 			  }
-			  if (commands.isEmpty())
+			  if (index >= commands.size())
 				  frame.postMessage("Drawing Complete. " +
 						  "No further drawing commands available.\n");
 		  }
@@ -78,7 +79,7 @@ public class Parser
 	  if (command.equals("DS")) { drawString(line.substring(3, line.length())); return; }
 	  if (command.equals("DA")) { drawArc(line.substring(2, line.length())); return; }
 	  if (command.equals("DO")) { drawOval(line.substring(2, line.length())); return; }
-	  throw new ParseException("Unknown drawing command");
+	  throw new ParseException("Unknown drawing command \""+command+"\" of line \""+line+"\"");
   }
 
   private void drawLine(String args) throws ParseException {
@@ -182,7 +183,7 @@ public class Parser
     if (colourName.equals("red")) { image.setColour(Color.RED); return;}
     if (colourName.equals("white")) { image.setColour(Color.WHITE); return;}
     if (colourName.equals("yellow")) { image.setColour(Color.YELLOW); return;}
-    throw new ParseException("Invalid colour name");
+    throw new ParseException("Invalid colour name \"" + colourName + "\"");
   }
 
   public void initButtons() {
@@ -196,9 +197,10 @@ public class Parser
 		  @Override public void handle(ActionEvent e) {
 			  try {
 				  if (step) {
-					  if (!commands.isEmpty()) {
+					  if (!(index < commands.size())) {
+						  frame.postMessage(commands.size() + "\n");
 						  parseLine(commands.get(0));
-						  commands.remove(0);
+						  index++;
 					  }
 					  else {
 						  frame.postMessage("Drawing Complete. " +
@@ -222,6 +224,10 @@ public class Parser
     if (tokenizer.hasMoreTokens())
       return Integer.parseInt(tokenizer.nextToken());
     else
-      throw new ParseException("Missing Integer value");
+      throw new ParseException("Missing Integer value on input command");
+  }
+  
+  public void resetIndex() {
+	  index = 0;
   }
 }

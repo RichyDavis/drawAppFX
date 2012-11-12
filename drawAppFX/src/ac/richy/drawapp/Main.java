@@ -14,7 +14,6 @@ public class Main extends Application
 
 		ImagePanel imagePanel = main.getImagePanel();
 		Reader reader = new InputStreamReader(System.in);
-
 		Parser parser = new Parser(reader,imagePanel,main);
 		try {
 			parser.parse();
