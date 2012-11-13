@@ -25,7 +25,7 @@ public class Parser
 		this.reader = new BufferedReader(reader);
 		this.image = image;
 		this.frame = frame;
-		initButtons();
+		initNextButton();
 	}
 
 	public void parse() throws ParseException {
@@ -87,6 +87,15 @@ public class Parser
 		if (command.equals("DO")) { drawOval(line.substring(2, line.length())); return; }
 		if (command.equals("DI")) { drawImage(line.substring(3, line.length())); return; }
 		if (command.equals("BS")) { setBackgroundSize(line.substring(2, line.length())); return; }
+		if (command.equals("BC")) { setBackgroundColour(line.substring(3, line.length())); return; }
+		if (command.equals("CA")) { clearAll(line.substring(3, line.length())); return; }
+		if (command.equals("TT")) { turtleModeOn(line.substring(2,line.length())); return; }
+		if (command.equals("TF")) { turtleModeOff(); return; }
+		if (command.equals("TM")) { turtleForward(line.substring(2,line.length())); return; }
+		if (command.equals("TR")) { turtleTurn(line.substring(2,line.length())); return; }
+		if (command.equals("TA")) { turtleSetAngle(line.substring(2,line.length())); return; }
+		if (command.equals("TP")) { turtleSetPosition(line.substring(2,line.length())); return; }
+		if (command.equals("TC")) { turtleSetColour(line.substring(2,line.length())); return; }
 		if (command.equals("PS")) { postString(line.substring(3, line.length())); return; }
 		if (command.equals("PC")) { postClear(); return; }
 		throw new ParseException("Unknown drawing command \""+command+"\" of line \""+line+"\"");
@@ -103,6 +112,14 @@ public class Parser
 		image.setBackgroundSize(x,y);
 	}
 	
+	private void setBackgroundColour(String args) throws ParseException {
+		int position = args.indexOf("@");
+		if (position == -1)
+			throw new ParseException("setBackgroundColour argument missing/invalid");
+		args = args.substring(position+1,args.length());
+		image.setBackgroundColour(getColour(args));
+	}
+
 	private void drawLine(String args) throws ParseException {
 		int x1 = 0;
 		int y1 = 0;
@@ -277,6 +294,85 @@ public class Parser
 		if (colourName.equals("yellow")) { return Color.YELLOW;}
 		throw new ParseException("Invalid colour name \"" + colourName + "\"");
 	}
+	
+	private void clearAll(String args) throws ParseException {
+		int position = args.indexOf("@");
+		if (position == -1)
+			throw new ParseException("setColour argument missing/invalid");
+		args = args.substring(position+1,args.length());
+		image.clear(getColour(args));
+	}
+
+	private void turtleModeOn(String args) throws ParseException {
+		int x = 0;
+		int y = 0;
+		StringTokenizer tokenizer = new StringTokenizer(args);
+		x = getInteger(tokenizer);
+		y = getInteger(tokenizer);
+		image.turtleModeOn(x,y);
+	}
+
+	private void turtleModeOff() {
+		image.turtleModeOff();
+	}
+
+	private void turtleForward(String args) throws ParseException {
+		try {
+			int distance = 0;
+			StringTokenizer tokenizer = new StringTokenizer(args);
+			distance = getInteger(tokenizer);
+			image.turtleForward(distance);
+		} catch (TurtleModeException e) {
+			frame.postMessage("Turtle Mode Exception: " + e.getMessage() +"\n");
+		}
+	}
+
+	private void turtleTurn(String args) throws ParseException {
+		try {
+			int angle = 0;
+			StringTokenizer tokenizer = new StringTokenizer(args);
+			angle = getInteger(tokenizer);
+			image.turtleTurn(angle);
+		} catch (TurtleModeException e) {
+			frame.postMessage("Turtle Mode Exception: " + e.getMessage() +"\n");
+		}
+	}
+
+	private void turtleSetAngle(String args) throws ParseException {
+		try {
+			int angle = 0;
+			StringTokenizer tokenizer = new StringTokenizer(args);
+			angle = getInteger(tokenizer);
+			image.turtleSetAngle(angle);
+		} catch (TurtleModeException e) {
+			frame.postMessage("Turtle Mode Exception: " + e.getMessage() +"\n");
+		}
+	}
+
+	private void turtleSetPosition(String args) throws ParseException {
+		try {
+			int x = 0;
+			int y = 0;
+			StringTokenizer tokenizer = new StringTokenizer(args);
+			x = getInteger(tokenizer);
+			y = getInteger(tokenizer);
+			image.turtleSetPosition(x,y);
+		} catch (TurtleModeException e) {
+			frame.postMessage("Turtle Mode Exception: " + e.getMessage() +"\n");
+		}
+	}
+
+	private void turtleSetColour(String args) throws ParseException {
+		try {
+			int position = args.indexOf("@");
+			if (position == -1)
+				throw new ParseException("SetTurtleColour argument missing/invalid");
+			args = args.substring(position+1,args.length());
+			image.turtleSetColour(getColour(args));
+		} catch (TurtleModeException e) {
+			frame.postMessage("Turtle Mode Exception: " + e.getMessage() +"\n");
+		}
+	}
 
 	private void postString(String args) throws ParseException {
 		int position = args.indexOf("@");
@@ -292,19 +388,7 @@ public class Parser
 		frame.clearMessageView();
 	}
 
-	public void initButtons() {
-		frame.getQuitButton().setOnAction(new EventHandler<ActionEvent>() {
-			@Override public void handle(ActionEvent e) {
-				frame.getStage().close();
-			}
-		});
-		
-		frame.getSaveButton().setOnAction(new EventHandler<ActionEvent>() {
-			@Override public void handle(ActionEvent e) {
-				image.saveImage();
-			}
-		});
-
+	public void initNextButton() {
 		frame.getNextButton().setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent actionevent) {
 				try {

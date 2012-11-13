@@ -15,6 +15,14 @@ void setBackgroundSize(int x, int y) {
   printf("BS %i %i\n", x, y);
 }
 
+void setBackgroundColour(colour c) {
+  printf("BC @%s\n",translateColour(c));
+}
+
+void clear(colour c) {
+  printf("CA @%s\n",translateColour(c));
+}
+
 void drawLine(int x1, int x2, int x3, int x4) {
   printf("DL %i %i %i %i\n", x1, x2, x3, x4);
 }
@@ -89,4 +97,32 @@ char* translateColour(colour c) {
     default : colourName = ""; break;
   }
   return colourName;
+}
+
+void turtleModeOn(int x, int y) {
+  printf("TT %i %i\n",x , y);
+}
+
+void turtleModeOff() {
+  printf("TF\n");
+}
+
+void forward(int distance) {
+  printf("TM %i\n",distance);
+}
+
+void turn(int degrees) {
+  printf("TR %i\n",degrees);
+}
+
+void setTurtleColour(colour c) {
+  printf("TC @%s\n",translateColour(c));
+}
+
+void setPosition(int x, int y) {
+  printf("TP %i %i\n", x, y);
+}
+
+void setAngle(int degrees) {
+  printf("TA %i\n",degrees);
 }

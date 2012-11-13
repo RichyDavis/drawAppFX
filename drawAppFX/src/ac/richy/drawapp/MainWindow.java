@@ -1,5 +1,7 @@
 package ac.richy.drawapp;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -44,7 +46,7 @@ public class MainWindow
 		stage.setTitle("Draw App");
 		AnchorPane anchorpane = new AnchorPane();
 		Scene scene = new Scene(anchorpane, width, height, Color.WHITESMOKE);
-		imagePanel = new ImagePanel(width,height);
+		imagePanel = new ImagePanel(this,width,height);
 
 		quitButton = new Button("Close");
 		quitButton.setPrefSize(100, 20);
@@ -78,6 +80,21 @@ public class MainWindow
 		setWidth(width);
 		setHeight(height);
 		stage.show();
+		initButtons();
+	}
+	
+	private void initButtons() {
+		quitButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent e) {
+				stage.close();
+			}
+		});
+		
+		saveButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent e) {
+				imagePanel.saveImage();
+			}
+		});
 	}
 
 	public void setWidth(int width) {
@@ -101,19 +118,9 @@ public class MainWindow
 		return imagePanel;
 	}
 	
-	public Button getQuitButton()
-	{
-		return quitButton;
-	}
-	
 	public Button getNextButton()
 	{
 		return nextButton;
-	}
-	
-	public Button getSaveButton()
-	{
-		return saveButton;
 	}
 
 	public Stage getStage()
