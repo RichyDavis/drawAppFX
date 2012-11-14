@@ -17,6 +17,12 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
+
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.lang.Math;
 
 public class ImagePanel
@@ -25,10 +31,11 @@ public class ImagePanel
 	private Rectangle graphics;
 	private MainWindow frame;
 	private boolean turtlemode = false;
-	private Color turtlecolour;
+	private Paint colour = Color.BLACK;
 	private int turtleangle = 0;
 	private int turtleX = 0;
 	private int turtleY = 0;
+	private Robot bot;
 
 	public ImagePanel(MainWindow frame, int width, int height)
 	{
@@ -57,7 +64,7 @@ public class ImagePanel
 		image.getChildren().add(graphics);
 	}
 
-	public void setColour(Paint colour)
+	public void paintNode(Paint colour)
 	{
 		Node node = image.getChildren().get(image.getChildren().size()-1);
 		if (node instanceof Shape) {
@@ -68,24 +75,25 @@ public class ImagePanel
 					((Shape)node).setFill(colour);
 		}
 	}
+
+	public void setColour(Paint colour)
+	{
+		this.colour = colour;
+	}
 	
 	public void setGradient(Color colour1, Color colour2, int x, int y) {
 		
 		Stop stops[] = {new Stop(0d,colour1), new Stop(1d,colour2)};
-		LinearGradient gradient =
-				new LinearGradient(0,0,x,y,true,CycleMethod.NO_CYCLE,stops);
-		setColour(gradient);
+		this.colour = new LinearGradient(0,0,x,y,true,CycleMethod.NO_CYCLE,stops);
 	}
 	
 	public void setRadialGradient(Color colour1, Color colour2) {
 		
 		Stop stops[] = {new Stop(0d,colour1), new Stop(1d,colour2)};
-		RadialGradient gradient = 
-				new RadialGradient(0,0,0.5,0.5,0.5,true,CycleMethod.NO_CYCLE,stops);
-		setColour(gradient);
+		this.colour = new RadialGradient(0,0,0.5,0.5,0.5,true,CycleMethod.NO_CYCLE,stops);
 	}
 
-	public void setStroke(Paint colour)
+	public void addStroke(Paint colour)
 	{
 		Node node = image.getChildren().get(image.getChildren().size()-1);
 		if (node instanceof Shape) {
@@ -98,6 +106,7 @@ public class ImagePanel
 	{
 		Line line = new Line(x1, y1, x2, y2);
 		image.getChildren().add(line);
+		paintNode(colour);
 	}
 
 	public void drawRect(int x1, int y1, int x2, int y2) {
@@ -106,17 +115,20 @@ public class ImagePanel
 		rectangle.setStrokeType(StrokeType.INSIDE);
 		rectangle.setFill(null);
 		image.getChildren().add(rectangle);
+		paintNode(colour);
 	}
 	
 	public void fillRect(int x1, int y1, int x2, int y2) {
 		Rectangle rectangle = new Rectangle(x1, y1, x2, y2);
 		image.getChildren().add(rectangle);
+		paintNode(colour);
 	}
 
 	public void drawString(int x, int y, String s)
 	{
 		Text text = new Text(x,y,s);
 		image.getChildren().add(text);
+		paintNode(colour);
 	}
 
 	public void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle)
@@ -127,6 +139,7 @@ public class ImagePanel
 		arc.setStrokeType(StrokeType.INSIDE);
 		arc.setFill(null);
 		image.getChildren().add(arc);
+		paintNode(colour);
 	}
 
 	public void drawOval(int x, int y, int width, int height)
@@ -136,6 +149,14 @@ public class ImagePanel
 		ellipse.setStrokeType(StrokeType.INSIDE);
 		ellipse.setFill(null);
 		image.getChildren().add(ellipse);
+		paintNode(colour);
+	}
+	
+	public void fillOval(int x, int y, int width, int height)
+	{
+		Ellipse ellipse = new Ellipse((x+width/2),(y+height/2),(width/2)+1,(height/2)+1);
+		image.getChildren().add(ellipse);
+		paintNode(colour);
 	}
 	
 	public void drawImage(int x, int y, int width, int height, String filename) {
@@ -153,7 +174,6 @@ public class ImagePanel
 
 	public void turtleModeOn(int x, int y) {
 		turtlemode = true;
-		turtlecolour = Color.BLACK;
 		if (!turtlemode)
 			frame.postMessage("Turtle mode is enabled.\n");
 		try {
@@ -197,7 +217,7 @@ public class ImagePanel
 				turtleY += distance*Math.sin(turtleangle);
 			}
 			drawLine(prevX, prevY, turtleX, turtleY);
-			setColour(turtlecolour);
+			paintNode(colour);
 			postCursorPosition();
 		}
 		else throw new TurtleModeException("Turtle Mode is disabled");
@@ -209,13 +229,6 @@ public class ImagePanel
 			if (turtleangle < 0)
 				turtleangle = 360 + turtleangle;
 			postCursorPosition();
-		}
-		else throw new TurtleModeException("Turtle Mode is disabled");
-	}
-	
-	public void turtleSetColour(Color colour) throws TurtleModeException {
-		if (turtlemode) {
-			turtlecolour = colour;
 		}
 		else throw new TurtleModeException("Turtle Mode is disabled");
 	}
@@ -245,8 +258,29 @@ public class ImagePanel
 	}
 
 	public void saveImage() {
-		//save image code
-		
+		try {
+			this.bot = new Robot();
+			int sceneX = (int) (frame.getStage().getScene().getX() +
+					frame.getStage().getX());
+			int sceneY = (int) (frame.getStage().getScene().getY() +
+					frame.getStage().getY());
+			int bgwidth = (int) graphics.getWidth();
+			int bgheight = (int) graphics.getHeight();
+			
+			java.awt.Rectangle windowRect =
+					new java.awt.Rectangle(sceneX,sceneY,bgwidth,bgheight);
+			BufferedImage bi = bot.createScreenCapture(windowRect);
+			
+			File savefile = new java.io.File("image.png"); //add more outputs
+			javax.imageio.ImageIO.write(bi, "png", savefile);
+		} catch (AWTException ex) {
+			frame.postMessage("Save Image failed - AWTException:" +
+					" possible lack of permissions\n");
+		} catch (IOException e) {
+			frame.postMessage("Save Image failed - IOException: " +
+					"failure saving file\n");
+			e.printStackTrace();
+		}
 	}
 
 	public Group getImage()

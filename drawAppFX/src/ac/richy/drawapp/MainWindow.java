@@ -77,6 +77,7 @@ public class MainWindow
 
 		stage.setScene(scene);
 		// Annoyingly, stage width and height include size of any decorations
+		stage.show();
 		setWidth(width);
 		setHeight(height);
 		stage.show();
@@ -98,24 +99,32 @@ public class MainWindow
 	}
 
 	public void setWidth(int width) {
-		width += 15;
+		width += (int) (stage.getScene().getX()*2);
 		stage.setWidth(width);
 		this.width = width;
 	}
-	
+
 	public void setHeight(int height) {
-		height += (30 + quitButton.getPrefHeight() +
-				hboxButtons.getPadding().getTop() +
+		height += 1 + (int) (stage.getScene().getY() + stage.getScene().getX() +
+				quitButton.getPrefHeight() + hboxButtons.getPadding().getTop() +
 				hboxButtons.getPadding().getBottom() +
 				messageView.getPrefHeight() + vbox.getPadding().getTop() +
 				vbox.getPadding().getBottom() + vbox.getSpacing());
 		stage.setHeight(height);
 		this.height = height;
 	}
-	
+
 	public ImagePanel getImagePanel()
 	{
 		return imagePanel;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
 	}
 	
 	public Button getNextButton()

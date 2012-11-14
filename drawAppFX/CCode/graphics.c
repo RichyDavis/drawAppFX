@@ -32,23 +32,27 @@ void drawRect(int x1, int x2, int x3, int x4) {
 }
 
 void drawOval(int x, int y, int width, int height) {
-  printf("DO %i %i %i %i\n",x,y,width,height);
+  printf("DO %i %i %i %i\n", x, y, width, height);
 }
 
 void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
-  printf("DA %i %i %i %i %i %i\n",x,y,width,height, startAngle, arcAngle);
+  printf("DA %i %i %i %i %i %i\n", x, y, width, height, startAngle, arcAngle);
 }
 
 void fillRect(int x1, int x2, int x3, int x4) {
   printf("FR %i %i %i %i\n", x1, x2, x3, x4);
 }
 
+void fillOval(int x, int y, int width, int height) {
+  printf("FO %i %i %i %i\n", x, y, width, height);
+}
+
 void drawString(char* s, int x, int y) {
-  printf("DS %i %i @%s\n",x,y,s);
+  printf("DS %i %i @%s\n", x, y, s);
 }
 
 void drawImage(char* s, int x1, int x2, int x3, int x4) {
-  printf("DI %i %i %i %i @%s\n",x1,x2,x3,x4,s);
+  printf("DI %i %i %i %i @%s\n", x1, x2, x3, x4, s);
 }
 
 void postString(char* s) {
@@ -66,8 +70,8 @@ void setColour(colour c) {
   printf("SC @%s\n",translateColour(c));
 }
 
-void setStroke(colour c) {
-  printf("SS @%s\n",translateColour(c));
+void addStroke(colour c) {
+  printf("AS @%s\n",translateColour(c));
 }
 
 void setGradient(colour c1, colour c2, int x, int y) {
@@ -113,10 +117,6 @@ void forward(int distance) {
 
 void turn(int degrees) {
   printf("TR %i\n",degrees);
-}
-
-void setTurtleColour(colour c) {
-  printf("TC @%s\n",translateColour(c));
 }
 
 void setPosition(int x, int y) {

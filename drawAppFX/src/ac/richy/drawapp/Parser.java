@@ -78,8 +78,9 @@ public class Parser
 		if (command.equals("DL")) { drawLine(line.substring(2,line.length())); return; }
 		if (command.equals("DR")) { drawRect(line.substring(2, line.length())); return; }
 		if (command.equals("FR")) { fillRect(line.substring(2, line.length())); return; }
+		if (command.equals("FO")) { fillOval(line.substring(2, line.length())); return; }
+		if (command.equals("AS")) { addStroke(line.substring(2, line.length())); return; }
 		if (command.equals("SC")) { setColour(line.substring(2, line.length())); return; }
-		if (command.equals("SS")) { setStroke(line.substring(2, line.length())); return; }
 		if (command.equals("SG")) { setGradient(line.substring(2, line.length())); return; }
 		if (command.equals("SR")) { setRadialGradient(line.substring(2, line.length())); return; }
 		if (command.equals("DS")) { drawString(line.substring(3, line.length())); return; }
@@ -95,7 +96,6 @@ public class Parser
 		if (command.equals("TR")) { turtleTurn(line.substring(2,line.length())); return; }
 		if (command.equals("TA")) { turtleSetAngle(line.substring(2,line.length())); return; }
 		if (command.equals("TP")) { turtleSetPosition(line.substring(2,line.length())); return; }
-		if (command.equals("TC")) { turtleSetColour(line.substring(2,line.length())); return; }
 		if (command.equals("PS")) { postString(line.substring(3, line.length())); return; }
 		if (command.equals("PC")) { postClear(); return; }
 		throw new ParseException("Unknown drawing command \""+command+"\" of line \""+line+"\"");
@@ -111,11 +111,12 @@ public class Parser
 		frame.setHeight(y);
 		image.setBackgroundSize(x,y);
 	}
-	
+
 	private void setBackgroundColour(String args) throws ParseException {
 		int position = args.indexOf("@");
 		if (position == -1)
-			throw new ParseException("setBackgroundColour argument missing/invalid");
+			throw new ParseException("\"" + commands.get(index) +
+					"\" @colour argument missing/invalid");
 		args = args.substring(position+1,args.length());
 		image.setBackgroundColour(getColour(args));
 	}
@@ -194,6 +195,20 @@ public class Parser
 		image.drawOval(x1, y1, width, height);
 	}
 
+	private void fillOval(String args) throws ParseException {
+		int x1 = 0;
+		int y1 = 0;
+		int width = 0;
+		int height = 0;
+
+		StringTokenizer tokenizer = new StringTokenizer(args);
+		x1 = getInteger(tokenizer);
+		y1 = getInteger(tokenizer);
+		width = getInteger(tokenizer);
+		height = getInteger(tokenizer);
+		image.fillOval(x1, y1, width, height);
+	}
+
 	private void drawString(String args) throws ParseException {
 		int x = 0;
 		int y = 0 ;
@@ -202,7 +217,8 @@ public class Parser
 		x = getInteger(tokenizer);
 		y = getInteger(tokenizer);
 		int position = args.indexOf("@");
-		if (position == -1) throw new ParseException("DrawString string is missing/invalid");
+		if (position == -1) throw new ParseException("\"" + commands.get(index) +
+				"\" @string argument missing/invalid");
 		s = args.substring(position+1,args.length());
 		image.drawString(x,y,s);
 	}
@@ -232,17 +248,19 @@ public class Parser
 	private void setColour(String args) throws ParseException {
 		int position = args.indexOf("@");
 		if (position == -1)
-			throw new ParseException("setColour colour argument missing/invalid");
+			throw new ParseException("\"" + commands.get(index) +
+					"\" @colour argument missing/invalid");
 		args = args.substring(position+1,args.length());
 		image.setColour(getColour(args));
 	}
 
-	private void setStroke(String args) throws ParseException {
+	private void addStroke(String args) throws ParseException {
 		int position = args.indexOf("@");
 		if (position == -1)
-			throw new ParseException("setStroke colour argument missing/invalid");
+			throw new ParseException("\"" + commands.get(index) +
+					"\" @colour argument missing/invalid");
 		args = args.substring(position+1,args.length());
-		image.setStroke(getColour(args));
+		image.addStroke(getColour(args));
 	}
 
 	private void setGradient(String args) throws ParseException {
@@ -253,7 +271,8 @@ public class Parser
 		y = getInteger(tokenizer);
 		int position = args.indexOf("@");
 		if (position == -1)
-			throw new ParseException("setGradient colour arguments missing/invalid");
+			throw new ParseException("\"" + commands.get(index) +
+					"\" @colour argument missing/invalid");
 		args = args.substring(position+1,args.length());
 		String[] colours = new String[2];
 		if (args.split(",").length == 2) {
@@ -267,7 +286,8 @@ public class Parser
 	private void setRadialGradient(String args) throws ParseException {
 		int position = args.indexOf("@");
 		if (position == -1)
-			throw new ParseException("setRadialGradient colour arguments missing/invalid");
+			throw new ParseException("\"" + commands.get(index) +
+					"\" @colour argument missing/invalid");
 		args = args.substring(position+1,args.length());
 		String[] colours = new String[2];
 		if (args.split(",").length == 2) {
@@ -294,11 +314,12 @@ public class Parser
 		if (colourName.equals("yellow")) { return Color.YELLOW;}
 		throw new ParseException("Invalid colour name \"" + colourName + "\"");
 	}
-	
+
 	private void clearAll(String args) throws ParseException {
 		int position = args.indexOf("@");
 		if (position == -1)
-			throw new ParseException("setColour argument missing/invalid");
+			throw new ParseException("\"" + commands.get(index) +
+					"\" @colour argument missing/invalid");
 		args = args.substring(position+1,args.length());
 		image.clear(getColour(args));
 	}
@@ -362,18 +383,6 @@ public class Parser
 		}
 	}
 
-	private void turtleSetColour(String args) throws ParseException {
-		try {
-			int position = args.indexOf("@");
-			if (position == -1)
-				throw new ParseException("SetTurtleColour argument missing/invalid");
-			args = args.substring(position+1,args.length());
-			image.turtleSetColour(getColour(args));
-		} catch (TurtleModeException e) {
-			frame.postMessage("Turtle Mode Exception: " + e.getMessage() +"\n");
-		}
-	}
-
 	private void postString(String args) throws ParseException {
 		int position = args.indexOf("@");
 		String s = "";
@@ -381,7 +390,8 @@ public class Parser
 			s = args.substring(position+1,args.length()).concat("\n");
 			frame.postMessage(s);
 		}
-		else throw new ParseException("postString string is missing/invalid");
+		else throw new ParseException("\"" + commands.get(index) +
+				"\" @string argument missing/invalid");
 	}
 
 	private void postClear() {
@@ -395,6 +405,11 @@ public class Parser
 					if (step) {
 						if (index < commands.size()) {
 							parseLine(commands.get(index));
+							String skipcheck = commands.get(index).substring(0, 2);
+							if (skipcheck.equals("SC")||skipcheck.equals("SG")||skipcheck.equals("SR")) {
+								index++;
+								parseLine(commands.get(index));
+							}
 							index++;
 						}
 						else {
@@ -418,10 +433,17 @@ public class Parser
 	}
 
 	private int getInteger(StringTokenizer tokenizer) throws ParseException {
-		if (tokenizer.hasMoreTokens())
-			return Integer.parseInt(tokenizer.nextToken());
+		if (tokenizer.hasMoreTokens()) {
+			try {
+				return Integer.parseInt(tokenizer.nextToken());
+			} catch (NumberFormatException e) {
+				throw new ParseException("Non parsable token on input \"" +
+						commands.get(index) + "\": integer expected");
+			}
+		}
 		else
-			throw new ParseException("Missing Integer value on input command");
+			throw new ParseException("Missing Integer value on input command \"" +
+					commands.get(index) + "\"");
 	}
 
 	public void resetIndex() {
