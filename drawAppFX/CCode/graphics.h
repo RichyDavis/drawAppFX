@@ -16,7 +16,7 @@ void postClear();
 void drawImage(char*,int,int,int,int);
 char* translateColour(colour);
 void setColour(colour);
-void addStroke(colour);
+void setLineWidth(int);
 void setGradient(colour,colour,int,int);
 void setRadialGradient(colour,colour);
 void turtleMode(int,int);

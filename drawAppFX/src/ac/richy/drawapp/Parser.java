@@ -79,7 +79,7 @@ public class Parser
 		if (command.equals("DR")) { drawRect(line.substring(2, line.length())); return; }
 		if (command.equals("FR")) { fillRect(line.substring(2, line.length())); return; }
 		if (command.equals("FO")) { fillOval(line.substring(2, line.length())); return; }
-		if (command.equals("AS")) { addStroke(line.substring(2, line.length())); return; }
+		if (command.equals("SW")) { setLineWidth(line.substring(2, line.length())); return; }
 		if (command.equals("SC")) { setColour(line.substring(2, line.length())); return; }
 		if (command.equals("SG")) { setGradient(line.substring(2, line.length())); return; }
 		if (command.equals("SR")) { setRadialGradient(line.substring(2, line.length())); return; }
@@ -254,13 +254,11 @@ public class Parser
 		image.setColour(getColour(args));
 	}
 
-	private void addStroke(String args) throws ParseException {
-		int position = args.indexOf("@");
-		if (position == -1)
-			throw new ParseException("\"" + commands.get(index) +
-					"\" @colour argument missing/invalid");
-		args = args.substring(position+1,args.length());
-		image.addStroke(getColour(args));
+	private void setLineWidth(String args) throws ParseException {
+		int width = 0;
+		StringTokenizer tokenizer = new StringTokenizer(args);
+		width = getInteger(tokenizer);
+		image.setLineWidth(width);
 	}
 
 	private void setGradient(String args) throws ParseException {

@@ -73,7 +73,7 @@ public class MainWindow
 		AnchorPane.setBottomAnchor(vbox, 0d);
 		AnchorPane.setLeftAnchor(vbox, 0d);
 		AnchorPane.setRightAnchor(vbox, 0d);
-		anchorpane.getChildren().addAll(imagePanel.getImage(),vbox);
+		anchorpane.getChildren().addAll(imagePanel.getPane(),vbox);
 
 		stage.setScene(scene);
 		// Annoyingly, stage width and height include size of any decorations

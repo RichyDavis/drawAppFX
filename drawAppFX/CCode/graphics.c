@@ -70,8 +70,8 @@ void setColour(colour c) {
   printf("SC @%s\n",translateColour(c));
 }
 
-void addStroke(colour c) {
-  printf("AS @%s\n",translateColour(c));
+void setLineWidth(int width) {
+  printf("SW %i\n",width);
 }
 
 void setGradient(colour c1, colour c2, int x, int y) {
