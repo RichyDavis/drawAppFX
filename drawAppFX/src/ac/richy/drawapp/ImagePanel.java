@@ -231,7 +231,7 @@ public class ImagePanel
 		try {
 			SimpleDateFormat dformat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
 			File output = new File("./javaFXimage_" + dformat.format(new Date()) + ".png");
-			RenderedImage image = SwingFXUtils.fromFXImage(canvas.snapshot(null,null),null);
+			RenderedImage image = SwingFXUtils.fromFXImage(pane.snapshot(null,null),null);
 			ImageIO.write(image,"png",output);
 		} catch (IOException e) {
 			frame.postMessage("Save image failed - IOException: failure writing image to file\n");
