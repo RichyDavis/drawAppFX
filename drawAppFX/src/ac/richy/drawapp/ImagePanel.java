@@ -12,7 +12,6 @@ import javafx.scene.paint.Paint;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.ArcType;
-
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
@@ -31,11 +30,11 @@ public class ImagePanel
 	private GraphicsContext view;
 	private GraphicsContext backgroundview;
 	private boolean turtlemode = false;
-	private int turtleangle = 0;
-	private int turtleX = 0;
-	private int turtleY = 0;
+	private double turtleangle = 0;
+	private double turtleX = 0;
+	private double turtleY = 0;
 
-	public ImagePanel(MainWindow frame, int width, int height)
+	public ImagePanel(MainWindow frame, double width, double height)
 	{
 		this.frame = frame;
 		pane = new Pane();
@@ -47,7 +46,7 @@ public class ImagePanel
 		setBackgroundColour(Color.WHITE);
 	}
 
-	public void setBackgroundSize(int width, int height)
+	public void setBackgroundSize(double width, double height)
 	{
 		canvas.setWidth(width);
 		canvas.setHeight(height);
@@ -77,7 +76,7 @@ public class ImagePanel
 		view.setStroke(colour);
 	}
 	
-	public void setGradient(Color colour1, Color colour2, int x, int y) {
+	public void setGradient(Color colour1, Color colour2, double x, double y) {
 		
 		Stop stops[] = {new Stop(0d,colour1), new Stop(1d,colour2)};
 		view.setFill(new LinearGradient(0,0,x,y,true,CycleMethod.NO_CYCLE,stops));
@@ -89,50 +88,61 @@ public class ImagePanel
 		view.setFill(new RadialGradient(0,0,0.5,0.5,0.5,true,CycleMethod.NO_CYCLE,stops));
 	}
 
-	public void setLineWidth(int width)
+	public void setLineWidth(double width)
 	{
 		view.setLineWidth(width);
 	}
 
-	public void drawLine(int x1, int y1, int x2, int y2)
+	public void drawLine(double x1, double y1, double x2, double y2)
 	{
 		view.strokeLine(x1, y1, x2, y2);
 	}
 
-	public void drawRect(int x1, int y1, int x2, int y2) {
+	public void drawRect(double x1, double y1, double x2, double y2) {
 		view.strokeRect(x1, y1, x2, y2);
 	}
 	
-	public void fillRect(int x1, int y1, int x2, int y2) {
+	public void fillRect(double x1, double y1, double x2, double y2) {
 		view.fillRect(x1, y1, x2, y2);
 	}
 
-	public void drawString(int x, int y, String s)
+	public void drawString(double x, double y, String s)
 	{
 		view.strokeText(s, x, y);
 	}
 
-	public void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle)
+	public void drawArc(double x, double y, double width, double height,
+			double startangle, double arcangle)
 	{
-		view.strokeArc(x, y, width, height, startAngle, arcAngle, ArcType.OPEN);
+		view.strokeArc(x, y, width, height, startangle, arcangle, ArcType.OPEN);
 	}
 
-	public void drawOval(int x, int y, int width, int height)
+	public void drawQuadCurve(double x1, double y1, double x2, double y2,
+			double xc, double yc)
+	{
+		view.beginPath();
+		view.moveTo(x1, y1);
+		view.quadraticCurveTo(xc,yc,x2,y2);
+		view.stroke();
+		view.closePath();
+	}
+
+	public void drawOval(double x, double y, double width, double height)
 	{
 		view.strokeOval(x, y, width, height);
 	}
 	
-	public void fillOval(int x, int y, int width, int height)
+	public void fillOval(double x, double y, double width, double height)
 	{
 		view.fillOval(x, y, width, height);
 	}
 	
-	public void drawImage(int x, int y, int width, int height, String filename) {
+	public void drawImage(double x, double y, double width, double height, String filename) {
 		Image image = new Image(filename);
 		view.drawImage(image, x, y, width, height);
 	}
 
-	public void turtleModeOn(int x, int y) {
+	public void turtleModeOn(double x, double y) {
 		turtlemode = true;
 		if (!turtlemode)
 			frame.postMessage("Turtle mode is enabled.\n");
@@ -149,32 +159,29 @@ public class ImagePanel
 		turtlemode = false;
 	}
 
-	public void turtleForward(int distance) throws TurtleModeException {
+	public void turtleForward(double distance) throws TurtleModeException {
 		if (turtlemode) {
-			int prevX = turtleX;
-			int prevY = turtleY;
-			switch (turtleangle) {
-			case (0) : turtleX += distance; break;
-			case (90) : turtleY += distance; break;
-			case (180) : turtleX -= distance; break;
-			case (270) : turtleY -= distance; break;
-			}
-			if (turtleangle > 0 && turtleangle < 90) {
-				turtleX += distance*Math.sin(turtleangle);
-				turtleY -= distance*Math.cos(turtleangle);
+			double prevX = turtleX;
+			double prevY = turtleY;
+			if (turtleangle == 0) turtleX += distance;
+			else if (turtleangle == 90) turtleY += distance;
+			else if (turtleangle == 180) turtleX -= distance;
+			else if (turtleangle == 270) turtleY -= distance;
+			else if (turtleangle > 0 && turtleangle < 90) {
+				turtleX += distance*Math.cos(Math.toRadians(turtleangle));
+				turtleY += distance*Math.sin(Math.toRadians(turtleangle));
 			} 
 			else if (turtleangle > 90 && turtleangle < 180) {
-				turtleX -= distance*Math.cos(turtleangle);
-				turtleY -= distance*Math.sin(turtleangle);
+				turtleX -= distance*Math.sin(Math.toRadians(turtleangle-90));
+				turtleY += distance*Math.cos(Math.toRadians(turtleangle-90));
 			}
 			else if (turtleangle > 180 && turtleangle < 270) {
-
-				turtleX -= distance*Math.sin(turtleangle);
-				turtleY += distance*Math.cos(turtleangle);
+				turtleX -= distance*Math.cos(Math.toRadians(turtleangle-180));
+				turtleY -= distance*Math.sin(Math.toRadians(turtleangle-180));
 			}
 			else if (turtleangle > 270) {
-				turtleX += distance*Math.cos(turtleangle);
-				turtleY += distance*Math.sin(turtleangle);
+				turtleX += distance*Math.sin(Math.toRadians(turtleangle-270));
+				turtleY -= distance*Math.cos(Math.toRadians(turtleangle-270));
 			}
 			drawLine(prevX, prevY, turtleX, turtleY);
 			postCursorPosition();
@@ -182,7 +189,7 @@ public class ImagePanel
 		else throw new TurtleModeException("Turtle Mode is disabled");
 	}
 
-	public void turtleTurn(int angle) throws TurtleModeException {
+	public void turtleTurn(double angle) throws TurtleModeException {
 		if (turtlemode) {
 			turtleangle = (turtleangle + angle) % 360;
 			if (turtleangle < 0)
@@ -192,7 +199,7 @@ public class ImagePanel
 		else throw new TurtleModeException("Turtle Mode is disabled");
 	}
 
-	public void turtleSetAngle(int angle) throws TurtleModeException {
+	public void turtleSetAngle(double angle) throws TurtleModeException {
 		if (turtlemode) {
 			turtleangle = angle % 360;
 			if (turtleangle < 0)
@@ -202,18 +209,18 @@ public class ImagePanel
 		else throw new TurtleModeException("Turtle Mode is disabled");
 	}
 	
-	public void turtleSetPosition(int x, int y) throws TurtleModeException {
+	public void turtleSetPosition(double x, double y) throws TurtleModeException {
 		if (turtlemode) {
-			turtleX = x;
-			turtleY = y;
+			this.turtleX = x;
+			this.turtleY = y;
 			postCursorPosition();
 		}
 		else throw new TurtleModeException("Turtle Mode is disabled");
 	}
 
 	public void postCursorPosition() {
-		frame.postMessage("Cursor is at " + turtleX + ", "
-				+ turtleY + " with angle " + turtleangle + "\n");
+		frame.postMessage("Cursor is at " + (long) Math.floor(turtleX + 0.5d) + ", "
+				+ (long) Math.floor(turtleY + 0.5d) + " with angle " + turtleangle + "\n");
 	}
 	
 	public Pane getPane() {

@@ -15,10 +15,10 @@ import javafx.stage.Stage;
 
 public class MainWindow
 {
-	public static final int DEFAULT_WIDTH = 500;
-	public static final int DEFAULT_HEIGHT = 300;
-	private int width;
-	private int height;
+	public static final double DEFAULT_WIDTH = 500d;
+	public static final double DEFAULT_HEIGHT = 300d;
+	private double width;
+	private double height;
 
 	private Stage stage;
 	private ImagePanel imagePanel;
@@ -34,7 +34,7 @@ public class MainWindow
 		this(stage, DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
 
-	public MainWindow(Stage stage, int width, int height)
+	public MainWindow(Stage stage, double width, double height)
 	{
 		this.stage = stage;
 		this.width = width;
@@ -76,7 +76,6 @@ public class MainWindow
 		anchorpane.getChildren().addAll(imagePanel.getPane(),vbox);
 
 		stage.setScene(scene);
-		// Annoyingly, stage width and height include size of any decorations
 		stage.show();
 		setWidth(width);
 		setHeight(height);
@@ -98,18 +97,18 @@ public class MainWindow
 		});
 	}
 
-	public void setWidth(int width) {
-		width += (int) (stage.getScene().getX()*2);
+	public void setWidth(double width) {
+		width += (stage.getScene().getX()*2);
 		stage.setWidth(width);
 		this.width = width;
 	}
 
-	public void setHeight(int height) {
-		height += 1 + (int) (stage.getScene().getY() + stage.getScene().getX() +
+	public void setHeight(double height) {
+		height += (stage.getScene().getY() + stage.getScene().getX() +
 				quitButton.getPrefHeight() + hboxButtons.getPadding().getTop() +
 				hboxButtons.getPadding().getBottom() +
 				messageView.getPrefHeight() + vbox.getPadding().getTop() +
-				vbox.getPadding().getBottom() + vbox.getSpacing());
+				vbox.getPadding().getBottom() + vbox.getSpacing() + 1);
 		stage.setHeight(height);
 		this.height = height;
 	}
@@ -119,11 +118,11 @@ public class MainWindow
 		return imagePanel;
 	}
 
-	public int getWidth() {
+	public double getWidth() {
 		return width;
 	}
 
-	public int getHeight() {
+	public double getHeight() {
 		return height;
 	}
 	

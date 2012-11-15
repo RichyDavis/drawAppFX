@@ -85,6 +85,7 @@ public class Parser
 		if (command.equals("SR")) { setRadialGradient(line.substring(2, line.length())); return; }
 		if (command.equals("DS")) { drawString(line.substring(3, line.length())); return; }
 		if (command.equals("DA")) { drawArc(line.substring(2, line.length())); return; }
+		if (command.equals("DQ")) { drawQuadCurve(line.substring(2, line.length())); return; }
 		if (command.equals("DO")) { drawOval(line.substring(2, line.length())); return; }
 		if (command.equals("DI")) { drawImage(line.substring(3, line.length())); return; }
 		if (command.equals("BS")) { setBackgroundSize(line.substring(2, line.length())); return; }
@@ -102,11 +103,11 @@ public class Parser
 	}
 
 	private void setBackgroundSize(String args) throws ParseException {
-		int x = 0;
-		int y = 0;
+		double x = 0;
+		double y = 0;
 		StringTokenizer tokenizer = new StringTokenizer(args);
-		x = getInteger(tokenizer);
-		y = getInteger(tokenizer);
+		x = getDouble(tokenizer);
+		y = getDouble(tokenizer);
 		frame.setWidth(x);
 		frame.setHeight(y);
 		image.setBackgroundSize(x,y);
@@ -122,100 +123,117 @@ public class Parser
 	}
 
 	private void drawLine(String args) throws ParseException {
-		int x1 = 0;
-		int y1 = 0;
-		int x2 = 0;
-		int y2 = 0;
+		double x1 = 0;
+		double y1 = 0;
+		double x2 = 0;
+		double y2 = 0;
 
 		StringTokenizer tokenizer = new StringTokenizer(args);
-		x1 = getInteger(tokenizer);
-		y1 = getInteger(tokenizer);
-		x2 = getInteger(tokenizer);
-		y2 = getInteger(tokenizer);
+		x1 = getDouble(tokenizer);
+		y1 = getDouble(tokenizer);
+		x2 = getDouble(tokenizer);
+		y2 = getDouble(tokenizer);
 		image.drawLine(x1,y1,x2,y2);
 	}
 
 	private void drawRect(String args) throws ParseException {
-		int x1 = 0;
-		int y1 = 0;
-		int x2 = 0;
-		int y2 = 0;
+		double x1 = 0;
+		double y1 = 0;
+		double x2 = 0;
+		double y2 = 0;
 
 		StringTokenizer tokenizer = new StringTokenizer(args);
-		x1 = getInteger(tokenizer);
-		y1 = getInteger(tokenizer);
-		x2 = getInteger(tokenizer);
-		y2 = getInteger(tokenizer);
+		x1 = getDouble(tokenizer);
+		y1 = getDouble(tokenizer);
+		x2 = getDouble(tokenizer);
+		y2 = getDouble(tokenizer);
 		image.drawRect(x1, y1, x2, y2);
 	}
 
 	private void fillRect(String args) throws ParseException {
-		int x1 = 0;
-		int y1 = 0;
-		int x2 = 0;
-		int y2 = 0;
+		double x1 = 0;
+		double y1 = 0;
+		double x2 = 0;
+		double y2 = 0;
 
 		StringTokenizer tokenizer = new StringTokenizer(args);
-		x1 = getInteger(tokenizer);
-		y1 = getInteger(tokenizer);
-		x2 = getInteger(tokenizer);
-		y2 = getInteger(tokenizer);
+		x1 = getDouble(tokenizer);
+		y1 = getDouble(tokenizer);
+		x2 = getDouble(tokenizer);
+		y2 = getDouble(tokenizer);
 		image.fillRect(x1, y1, x2, y2);
 	}
 
 	private void drawArc(String args) throws ParseException {
-		int x = 0;
-		int y = 0;
-		int width = 0;
-		int height = 0;
-		int startAngle = 0;
-		int arcAngle = 0;
+		double x = 0;
+		double y = 0;
+		double width = 0;
+		double height = 0;
+		double startAngle = 0;
+		double arcAngle = 0;
 
 		StringTokenizer tokenizer = new StringTokenizer(args);
-		x = getInteger(tokenizer);
-		y = getInteger(tokenizer);
-		width = getInteger(tokenizer);
-		height = getInteger(tokenizer);
-		startAngle = getInteger(tokenizer);
-		arcAngle = getInteger(tokenizer);
+		x = getDouble(tokenizer);
+		y = getDouble(tokenizer);
+		width = getDouble(tokenizer);
+		height = getDouble(tokenizer);
+		startAngle = getDouble(tokenizer);
+		arcAngle = getDouble(tokenizer);
 		image.drawArc(x, y, width, height, startAngle, arcAngle);
+	}
+	
+	private void drawQuadCurve(String args) throws ParseException {
+		double x1 = 0;
+		double y1 = 0;
+		double x2 = 0;
+		double y2 = 0;
+		double xc = 0;
+		double yc = 0;
+		StringTokenizer tokenizer = new StringTokenizer(args);
+		x1 = getDouble(tokenizer);
+		y1 = getDouble(tokenizer);
+		x2 = getDouble(tokenizer);
+		y2 = getDouble(tokenizer);
+		xc = getDouble(tokenizer);
+		yc = getDouble(tokenizer);
+		image.drawQuadCurve(x1, y1, x2, y2, xc, yc);
 	}
 
 	private void drawOval(String args) throws ParseException {
-		int x1 = 0;
-		int y1 = 0;
-		int width = 0;
-		int height = 0;
+		double x1 = 0;
+		double y1 = 0;
+		double width = 0;
+		double height = 0;
 
 		StringTokenizer tokenizer = new StringTokenizer(args);
-		x1 = getInteger(tokenizer);
-		y1 = getInteger(tokenizer);
-		width = getInteger(tokenizer);
-		height = getInteger(tokenizer);
+		x1 = getDouble(tokenizer);
+		y1 = getDouble(tokenizer);
+		width = getDouble(tokenizer);
+		height = getDouble(tokenizer);
 		image.drawOval(x1, y1, width, height);
 	}
 
 	private void fillOval(String args) throws ParseException {
-		int x1 = 0;
-		int y1 = 0;
-		int width = 0;
-		int height = 0;
+		double x1 = 0;
+		double y1 = 0;
+		double width = 0;
+		double height = 0;
 
 		StringTokenizer tokenizer = new StringTokenizer(args);
-		x1 = getInteger(tokenizer);
-		y1 = getInteger(tokenizer);
-		width = getInteger(tokenizer);
-		height = getInteger(tokenizer);
+		x1 = getDouble(tokenizer);
+		y1 = getDouble(tokenizer);
+		width = getDouble(tokenizer);
+		height = getDouble(tokenizer);
 		image.fillOval(x1, y1, width, height);
 	}
 
 	private void drawString(String args) throws ParseException {
-		int x = 0;
-		int y = 0 ;
+		double x = 0;
+		double y = 0 ;
 		String s = "";
 		StringTokenizer tokenizer = new StringTokenizer(args);
-		x = getInteger(tokenizer);
-		y = getInteger(tokenizer);
+		x = getDouble(tokenizer);
+		y = getDouble(tokenizer);
 		int position = args.indexOf("@");
 		if (position == -1) throw new ParseException("\"" + commands.get(index) +
 				"\" @string argument missing/invalid");
@@ -224,16 +242,16 @@ public class Parser
 	}
 
 	private void drawImage(String args) throws ParseException, FileNotFoundException {
-		int x = 0;
-		int y = 0 ;
-		int width = 0;
-		int height = 0;
+		double x = 0;
+		double y = 0 ;
+		double width = 0;
+		double height = 0;
 		String filename = "";
 		StringTokenizer tokenizer = new StringTokenizer(args);
-		x = getInteger(tokenizer);
-		y = getInteger(tokenizer);
-		width = getInteger(tokenizer);
-		height = getInteger(tokenizer);
+		x = getDouble(tokenizer);
+		y = getDouble(tokenizer);
+		width = getDouble(tokenizer);
+		height = getDouble(tokenizer);
 		int position = args.indexOf("@");
 		if (position == -1) 
 			throw new ParseException("DrawImage filename is missing/invalid");
@@ -255,18 +273,18 @@ public class Parser
 	}
 
 	private void setLineWidth(String args) throws ParseException {
-		int width = 0;
+		double width = 0;
 		StringTokenizer tokenizer = new StringTokenizer(args);
-		width = getInteger(tokenizer);
+		width = getDouble(tokenizer);
 		image.setLineWidth(width);
 	}
 
 	private void setGradient(String args) throws ParseException {
-		int x = 0;
-		int y = 0;
+		double x = 0;
+		double y = 0;
 		StringTokenizer tokenizer = new StringTokenizer(args);
-		x = getInteger(tokenizer);
-		y = getInteger(tokenizer);
+		x = getDouble(tokenizer);
+		y = getDouble(tokenizer);
 		int position = args.indexOf("@");
 		if (position == -1)
 			throw new ParseException("\"" + commands.get(index) +
@@ -323,11 +341,11 @@ public class Parser
 	}
 
 	private void turtleModeOn(String args) throws ParseException {
-		int x = 0;
-		int y = 0;
+		double x = 0;
+		double y = 0;
 		StringTokenizer tokenizer = new StringTokenizer(args);
-		x = getInteger(tokenizer);
-		y = getInteger(tokenizer);
+		x = getDouble(tokenizer);
+		y = getDouble(tokenizer);
 		image.turtleModeOn(x,y);
 	}
 
@@ -337,9 +355,9 @@ public class Parser
 
 	private void turtleForward(String args) throws ParseException {
 		try {
-			int distance = 0;
+			double distance = 0;
 			StringTokenizer tokenizer = new StringTokenizer(args);
-			distance = getInteger(tokenizer);
+			distance = getDouble(tokenizer);
 			image.turtleForward(distance);
 		} catch (TurtleModeException e) {
 			frame.postMessage("Turtle Mode Exception: " + e.getMessage() +"\n");
@@ -348,9 +366,9 @@ public class Parser
 
 	private void turtleTurn(String args) throws ParseException {
 		try {
-			int angle = 0;
+			double angle = 0;
 			StringTokenizer tokenizer = new StringTokenizer(args);
-			angle = getInteger(tokenizer);
+			angle = getDouble(tokenizer);
 			image.turtleTurn(angle);
 		} catch (TurtleModeException e) {
 			frame.postMessage("Turtle Mode Exception: " + e.getMessage() +"\n");
@@ -359,9 +377,9 @@ public class Parser
 
 	private void turtleSetAngle(String args) throws ParseException {
 		try {
-			int angle = 0;
+			double angle = 0;
 			StringTokenizer tokenizer = new StringTokenizer(args);
-			angle = getInteger(tokenizer);
+			angle = getDouble(tokenizer);
 			image.turtleSetAngle(angle);
 		} catch (TurtleModeException e) {
 			frame.postMessage("Turtle Mode Exception: " + e.getMessage() +"\n");
@@ -370,11 +388,11 @@ public class Parser
 
 	private void turtleSetPosition(String args) throws ParseException {
 		try {
-			int x = 0;
-			int y = 0;
+			double x = 0;
+			double y = 0;
 			StringTokenizer tokenizer = new StringTokenizer(args);
-			x = getInteger(tokenizer);
-			y = getInteger(tokenizer);
+			x = getDouble(tokenizer);
+			y = getDouble(tokenizer);
 			image.turtleSetPosition(x,y);
 		} catch (TurtleModeException e) {
 			frame.postMessage("Turtle Mode Exception: " + e.getMessage() +"\n");
@@ -430,21 +448,20 @@ public class Parser
 		});
 	}
 
-	private int getInteger(StringTokenizer tokenizer) throws ParseException {
+	private double getDouble(StringTokenizer tokenizer) throws ParseException {
 		if (tokenizer.hasMoreTokens()) {
 			try {
-				return Integer.parseInt(tokenizer.nextToken());
+				return Double.parseDouble(tokenizer.nextToken());
 			} catch (NumberFormatException e) {
 				throw new ParseException("Non parsable token on input \"" +
-						commands.get(index) + "\": integer expected");
+						commands.get(index) + "\": double expected");
+			} catch (NullPointerException e) {
+				throw new ParseException("Null string on input \"" +
+						commands.get(index) + "\": arguments expected");
 			}
 		}
 		else
-			throw new ParseException("Missing Integer value on input command \"" +
+			throw new ParseException("Missing Double value on input command \"" +
 					commands.get(index) + "\"");
-	}
-
-	public void resetIndex() {
-		index = 0;
 	}
 }
